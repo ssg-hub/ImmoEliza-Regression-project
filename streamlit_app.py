@@ -61,6 +61,8 @@ def classification_by_region(df):
 df = cleaning_data(df)
 
 st.set_page_config(layout="wide")
+st.title('Real estate analysis in Belgium')
+st.header('Selection of region / type')
 col1, col2 = st.beta_columns(2)
 
 
@@ -140,7 +142,10 @@ with col2:
     st.map(df_data)       
 
 st.markdown("""---""")
+st.header('Extraction of Target and Features')
 st.write('\n')
+st.write('In this case I am taking only price as Target and Area as Feature (We need to decide if this is variable or not)')
+st.markdown("""---""")
 
 col1, col2 = st.beta_columns(2)
 
@@ -149,6 +154,8 @@ with col1:
     st.write('\n')
     st.write('X = df_data['+'area'+'].to_numpy()')
     st.write('y = df_data['+'actual_price'+'].to_numpy()')
+    st.write('X = X.reshape(len(X),1)')
+    st.write('y = y.reshape(len(y),1)')
     st.write('\n')
 
     X = df_data['area'].to_numpy()
@@ -163,7 +170,8 @@ with col1:
     fig1 = plt.figure()
     plt.scatter(X, y)
     plt.ylabel('price')
-    plt.xlabel('area')    
+    plt.xlabel('area')
+    plt.title('Plot of  Target vs Feature (all data)')    
     st.write(fig1)
 
 with col2:
@@ -174,8 +182,10 @@ with col2:
     X_train, X_test, y_train, y_test = train_test_split(X,y, random_state=41, test_size=0.2)
     # plt.figure(figsize=(10, 6))
     fig2 = plt.figure()    
-    ax2 = plt.scatter(X_train, y_train, label='train')
-    ax2 = plt.scatter(X_test, y_test, label='test')
+    ax2 = plt.scatter(X_train, y_train, label='Data for training the model')
+    ax2 = plt.scatter(X_test, y_test, label='Data to test the model')
+    ax2 = plt.title('Plot of Target vs Feature (test & training data)')  
+    st.write('\n')
     ax2 = plt.ylabel('price')
     ax2 = plt.xlabel('area')
     ax2 = plt.legend()
