@@ -1,0 +1,3 @@
+note for HZU.
+Check the possible linear regressions to implement here:
+    https://scikit-learn.org/stable/modules/linear_model.html
