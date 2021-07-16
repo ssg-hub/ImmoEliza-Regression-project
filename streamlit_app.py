@@ -193,8 +193,11 @@ with col2:
     st.write(fig2)
 
 st.markdown("""---""")
+st.header('Testing a model (LinearRegression)')
 st.markdown("""---""")
 st.write('\n')
+
+col1, col2 = st.beta_columns(2)
 
 with col1:
     st.subheader('We create linear regression object')
@@ -207,10 +210,9 @@ with col1:
     regressor.fit(X_train, y_train)
     st.write('The regressor score is:', regressor.score(X_train, y_train))
     st.write('\n')
-    st.write('The score of our model with X_test and y_test is:')
-    st.write(regressor.score(X_test, y_test))
+    st.write('The score of our model with X_test and y_test is:',regressor.score(X_test, y_test))
     st.write('\n')    
-    st.write('Now, we will use the predict method of our model on the test dataset (X_test)')
+    st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
     st.write('\n')
     fig3 = plt.figure()
     plt.scatter(X_test, regressor.predict(X_test), label='Data from model')
@@ -218,10 +220,24 @@ with col1:
     plt.xlabel('Area')
     plt.ylabel('Price')
     plt.title('Price vs Area (Training set)')
+    st.write(fig3)
 
 
-
-
+with col2:
+    st.subheader('We now have a model to approximate the value of a property in the location selected')
+    st.write('\n')
+    st.write('Please chosse an area in [m^2] using the slider below to find the approximate value of the property')
+    st.write('\n')
+    a = float(min(X))
+    b = float(max(X))
+    
+    value_selected = st.slider('Area:', a, b)
+    
+    st.write('\n')  
+    
+    z = [float(value_selected)]
+    z = np.array(z).reshape(1, -1)
+    st.write('The approximate price of the property with that area is :', regressor.fit(X_train, y_train).predict(z))
 
 
 
