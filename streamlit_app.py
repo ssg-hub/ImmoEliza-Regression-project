@@ -11,6 +11,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
@@ -194,6 +195,30 @@ with col2:
 st.markdown("""---""")
 st.markdown("""---""")
 st.write('\n')
+
+with col1:
+    st.subheader('We create linear regression object')
+    st.write('\n')
+    st.write('regressor = LinearRegression()')
+    st.write('regressor.fit(X_train, y_train)')
+    st.write('regressor.score(X_train, y_train)')
+    st.write('\n')
+    regressor = LinearRegression()
+    regressor.fit(X_train, y_train)
+    st.write('The regressor score is:', regressor.score(X_train, y_train))
+    st.write('\n')
+    st.write('The score of our model with X_test and y_test is:')
+    st.write(regressor.score(X_test, y_test))
+    st.write('\n')    
+    st.write('Now, we will use the predict method of our model on the test dataset (X_test)')
+    st.write('\n')
+    fig3 = plt.figure()
+    plt.scatter(X_test, regressor.predict(X_test), label='Data from model')
+    plt.scatter(X, y, label='Orginal data')
+    plt.xlabel('Area')
+    plt.ylabel('Price')
+    plt.title('Price vs Area (Training set)')
+
 
 
 
