@@ -230,7 +230,7 @@ with expander_linear_regression:
         a_line = float(min(X))
         b_line = float(max(X))
         
-        value_selected_linear = st.slider('Area_linear:', a_line, b_line)
+        value_selected_linear = st.slider('Area_linear:', a_line, b_line, value=float(100))
         
         st.write('\n')  
         
@@ -246,7 +246,7 @@ with expander_neighborgs_regression:
         st.subheader('We create Neighbors regression object')
         st.write('\n')
         st.write('Please select the number of neighbors')
-        value_selected = st.slider('', 1, 10,1)
+        value_selected = st.slider('', 1, 10,4)
         
         st.code("""
         pipe = Pipeline([
@@ -287,7 +287,7 @@ with expander_neighborgs_regression:
         a_neig = float(min(X))
         b_neig = float(max(X))
         
-        value_selected_neig = st.slider('Area_neighbors:', a_neig, b_neig)
+        value_selected_neig = st.slider('Area_neighbors:', a_neig, b_neig, value=float(100))
         
         st.write('\n')  
         
@@ -326,7 +326,7 @@ with expander_all_together:
         st.subheader('Neighbors regression')
         st.write('\n')
         st.write('Please select the number of neighbors')
-        value_selected_all_neig = st.slider('Neighbors', 1, 10,1)
+        value_selected_all_neig = st.slider('Neighbors', 1, 10,4)
         st.write('\n')
     
         pipe = Pipeline([
@@ -362,7 +362,7 @@ with expander_all_together:
         a_all_reg = float(min(X))
         b_all_reg = float(max(X))
         
-        value_all_reg = st.slider('Area_all_neighbors:', a_all_reg, b_all_reg)                
+        value_all_reg = st.slider('Area_all_neighbors:', a_all_reg, b_all_reg, value=float(100))                
 
         st.write('\n')  
 
@@ -371,12 +371,12 @@ with expander_all_together:
     with col_linear:
         z_linear = [float(value_all_reg)]
         z_linear = np.array(z_linear).reshape(1, -1)
-        st.write('The linear regression approximate the price of the property with that area to :', regressor.fit(X_train, y_train).predict(z_linear))        
+        st.write('The linear regression approximate the price of the property with that area to :', np.round(regressor.fit(X_train, y_train).predict(z_linear),0))
 
     with col_neig:
         z_neig = [float(value_all_reg)]
         z_neig = np.array(z_neig).reshape(1, -1)
-        st.write('The neighbors regression approximate the price of the property with that area to :', pipe.fit(X_train, y_train).predict(z_neig))        
+        st.write('The neighbors regression approximate the price of the property with that area to :', pipe.fit(X_train, y_train).predict(z_neig))
         
 
 
