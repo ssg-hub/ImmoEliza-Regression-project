@@ -5,6 +5,21 @@
 import pandas as pd
 
 
+postal_code = pd.read_csv('postal_code_belgium.csv', sep=',')
+    
+def fixing_lon_lat(df):
+    #Finding the locations that need to adjust longitud and latitud
+    list_postal_codes_to_fill = df.loc[df['location_lat'].isnull()]['location'].values.tolist()
+    list_of_index_to_fix_lat_lon = df.loc[df['location_lat'].isnull()].index.values.astype(int)
+    
+    p = []
+    for i in range(len(list_postal_codes_to_fill)):
+        p = postal_code[postal_code.eq(list_postal_codes_to_fill[i]).any(1)].values.tolist()
+        df.loc[list_of_index_to_fix_lat_lon[i], ['location_lon']] = p[0][2]
+        df.loc[list_of_index_to_fix_lat_lon[i], ['location_lat']] = p[0][3]
+        p = []
+
+    return df
 
 def cleaning_data(df):
     """
@@ -20,20 +35,13 @@ def cleaning_data(df):
         Also we will drop all the duplicates
         We will finish with the columns that will be used in the analysis.
     """
-
-    #son 12128
     df = df.dropna(subset=['actual_price'])
-    #Ahora son 10795
     df = df.dropna(subset=['area'])
-    #Ahora son 9543
     # df = df.dropna(subset=['building_condition'])
     df = df.dropna(subset=['location_lat']) 
     df = df.dropna(subset=['location_lon'])     
-    #Ahora son 7059
     df = df.drop_duplicates(subset=['prop_id'])
-    #Ahora son 4605
     df = df.fillna(0)
-    #Now we add the price by m2
     df['price_x_m2'] = df['actual_price'] / df['area']
     df = df.drop(columns=['point_of_interest', 'subtype', 'old_price_value', 'room_number',
            'statistics_bookmark_count', 'statistics_view_count', 'creation_date', 
@@ -67,7 +75,6 @@ def classification_by_type(df):
         dataframe with all the apartment in Belgium.
 
     """
-    #This are the houses.
     df_houses = df.loc[df['type']=='HOUSE']
     df_office = df.loc[df['type']=='OFFICE']
     df_industry = df.loc[df['type']=='INDUSTRY']
@@ -96,6 +103,7 @@ def classification_by_region(df):
     df_flanders = df.loc[df['region']=='Flanders']
     df_wallonie = df.loc[df['region']=='Wallonie']
     return df_brussels, df_flanders, df_wallonie
+
 
 def create_df_plot(X, y, name: str):
     """
