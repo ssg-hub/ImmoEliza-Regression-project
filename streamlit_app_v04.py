@@ -10,7 +10,8 @@ import time
 import pandas as pd
 import numpy as np
 from utils.data_base_processing import (fixing_lon_lat, cleaning_data, classification_by_type,
-                                        classification_by_region, create_df_plot, outliers)
+                                        classification_by_region, create_df_plot, outliers,
+                                       prices_close_to_area)
 
 #To create the models
 from sklearn.model_selection import train_test_split
