@@ -11,9 +11,9 @@ from scipy import stats
 postal_code = pd.read_csv('postal_code_belgium.csv', sep=',')
 
 def outliers(df, strategy="Do not remove"):
-    if strategy =="Remove":
-        df = df[(np.abs(stats.zscore(df['actual_price'])) < 3)]
-        df = df[(np.abs(stats.zscore(df['area'])) < 3)]
+    if strategy[:6] =="Remove":
+        df = df[(np.abs(stats.zscore(df['actual_price'])) < int(strategy[-1]))]
+        df = df[(np.abs(stats.zscore(df['area'])) < int(strategy[-1]))]
     return df
 
 def fixing_lon_lat(df):
