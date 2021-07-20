@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 from utils.data_base_processing import (fixing_lon_lat, cleaning_data, classification_by_type,
                                         classification_by_region, create_df_plot, outliers,
-                                       prices_close_to_area)
+                                        prices_close_to_area)
 
 #To create the models
 from sklearn.model_selection import train_test_split
@@ -455,39 +455,82 @@ with expander_all_together:
         st.write('\n')
         a_all_reg = float(min(X))
         b_all_reg = float(max(X))
-        
-        value_all_reg = st.slider('Area_all_neighbors:', a_all_reg, b_all_reg, value=float(100))                
+       
+        value_all_reg = st.slider('Area for all the regressions:', a_all_reg, b_all_reg, value=float(100))                
 
-        st.write('\n')  
+        tolerance_area = st.slider('Area tolerance for error range:', float(10), float(50), float(20))                
+
+        mean_price = prices_close_to_area(df_data, float(value_all_reg), float(tolerance_area))
+
+        st.write('\n')
+
+        st.write('Properties with these characteristics have')
+        st.write("a real mean value of:")
+        currency = "€{:,.2f}".format(np.round(mean_price,2))
+        st.subheader(currency)        
+        st.write('\n')
+        st.write('\n')        
+        
 
     col_linear, col_mid, col_neig, col_mid, col_forest = st.beta_columns((1, 0.1, 1, 0.1, 1))        
+
 
     with col_linear:
         z_linear = [float(value_all_reg)]
         z_linear = np.array(z_linear).reshape(1, -1)
         st.write('The linear regression approximate the price of the property')
         st.write('with that area to :')
-        currency = np.round(regressor.fit(X_train, y_train).predict(z_linear)[0][0], 2)
-        currency = "€{:,.2f}".format(currency)
+        currency_value = np.round(regressor.fit(X_train, y_train).predict(z_linear)[0][0], 2)
+        currency = "€{:,.2f}".format(currency_value)
         st.subheader(currency)
         st.write('\n')
-        # st.subheader(mean_absolute_error(y_train, y_test))
-
+        st.write('When the value is compared with the experimental results')
+        st.write('there is an approximate margin of error of:')
+        error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
+        st.subheader(error_in_currency)
+        st.write('This means that when this model is')
+        st.write('compared with the real prices in')
+        st.write('the market, the error percentage is:')
+        st.write('\n')
+        porcent_error = np.abs(mean_price-currency_value)*100/currency_value
+        st.subheader(np.round(porcent_error,2))
 
     with col_neig:
         z_neig = [float(value_all_reg)]
         z_neig = np.array(z_neig).reshape(1, -1)
         st.write('The neighbors regression approximate the price')
         st.write('of the property with that area to :')
-        currency = np.round(pipe_neig.fit(X_train, y_train).predict(z_neig)[0][0], 2)
-        currency = "€{:,.2f}".format(currency)
+        currency_value = np.round(pipe_neig.fit(X_train, y_train).predict(z_neig)[0][0], 2)
+        currency = "€{:,.2f}".format(currency_value)
         st.subheader(currency)
+        st.write('\n')
+        st.write('When the value is compared with the experimental results')
+        st.write('there is an approximate margin of error of:')
+        error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
+        st.subheader(error_in_currency)
+        st.write('This means that when this model is')
+        st.write('compared with the real prices in')
+        st.write('the market, the error percentage is:')
+        st.write('\n')
+        porcent_error = np.abs(mean_price-currency_value)*100/currency_value
+        st.subheader(np.round(porcent_error,2))
 
     with col_forest:
         z_forest = [float(value_all_reg)]
         z_forest = np.array(z_forest).reshape(1, -1)
         st.write('The Random Forest regression approximate the price')
         st.write('of the property with that area to :')
-        currency = np.round(pipe_forest.fit(X_train, y_train).predict(z_forest)[0], 2)
-        currency = "€{:,.2f}".format(currency)
+        currency_value = np.round(pipe_forest.fit(X_train, y_train).predict(z_forest)[0], 2)
+        currency = "€{:,.2f}".format(currency_value)
         st.subheader(currency)
+        st.write('\n')
+        st.write('When the value is compared with the experimental results')
+        st.write('there is an approximate margin of error of:')
+        error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
+        st.subheader(error_in_currency)
+        st.write('This means that when this model is')
+        st.write('compared with the real prices in')
+        st.write('the market, the error percentage is:')
+        st.write('\n')
+        porcent_error = np.abs(mean_price-currency_value)*100/currency_value
+        st.subheader(np.round(porcent_error,2))        
