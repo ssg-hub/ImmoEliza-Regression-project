@@ -21,6 +21,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
+#To manage errors
+from sklearn.metrics import mean_absolute_error
+
+
 #To visualize the plots
 import matplotlib.pyplot as plt
 import plotly.express as px
