@@ -66,7 +66,7 @@ with st.sidebar:
                                       ('Apartment', 'House','Office','Industry'))    
 
     selection_outliers = st.sidebar.selectbox('Please select an outlier strategy:',
-                                              ('Do not remove', 'Remove'))    
+                                              ('Do not remove', 'Remove zscore > 4', 'Remove zscore > 3', 'Remove zscore > 2', 'Remove zscore > 1'))  
 
     st.markdown("""---""")    
     value_expand_seleccion_data = False
@@ -469,6 +469,9 @@ with expander_all_together:
         currency = np.round(regressor.fit(X_train, y_train).predict(z_linear)[0][0], 2)
         currency = "€{:,.2f}".format(currency)
         st.subheader(currency)
+        st.write('\n')
+        # st.subheader(mean_absolute_error(y_train, y_test))
+
 
     with col_neig:
         z_neig = [float(value_all_reg)]
@@ -478,7 +481,6 @@ with expander_all_together:
         currency = np.round(pipe_neig.fit(X_train, y_train).predict(z_neig)[0][0], 2)
         currency = "€{:,.2f}".format(currency)
         st.subheader(currency)
-
 
     with col_forest:
         z_forest = [float(value_all_reg)]
