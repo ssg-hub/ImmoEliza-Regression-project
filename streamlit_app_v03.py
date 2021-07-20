@@ -16,6 +16,7 @@ from utils.data_base_processing import (fixing_lon_lat, cleaning_data, classific
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -74,7 +75,9 @@ with st.sidebar:
     if st.button('Neighborgs regression'):
         value_expand_neighborgs_regression = True
 
-
+    value_expand_random_forest_regression = False
+    if st.button('Random Forest regression'):
+        value_expand_random_forest_regression = True
 
 
     value_expand_all_regression = False
@@ -292,6 +295,61 @@ with expander_neighborgs_regression:
         st.write('\n')  
         
         z = [float(value_selected_neig)]
+        z = np.array(z).reshape(1, -1)
+        st.write('The approximate price of the property with that area is :', pipe.fit(X_train, y_train).predict(z))
+
+expander_random_forest_regression = st.beta_expander("Random Forest Regression", expanded=value_expand_random_forest_regression)
+with expander_random_forest_regression:
+    col1, col_mid, col2 = st.beta_columns((1, 0.1, 1))
+    with col1:
+        st.subheader('We create Random Forest regression object')
+        st.write('\n')
+        st.write('Please select the sample threshold for splitting nodes')
+        value_selected = st.slider('', 2, 20, 10)
+
+        st.code("""
+        pipe = Pipeline([
+                    ("scale", StandardScaler()),
+                    ("model", RandomForestRegressor(min_samples_split= 'value', max_features='log2', random_state=42))
+                ])
+        pred = pipe.fit(X_train, y_train).predict(X_test)
+                """)
+        st.write('\n')
+
+        pipe = Pipeline([
+            ("scale", StandardScaler()),
+            ("model", RandomForestRegressor(min_samples_split=value_selected, max_features='log2', random_state=42))
+        ])
+        pred = pipe.fit(X_train, y_train).predict(X_test)
+
+        st.write('The pipe score is:', np.round(pipe.score(X_train, y_train), 2))
+        st.write('\n')
+        st.write('The score of our model with X_test and y_test is:', np.round(pipe.score(X_test, y_test), 2))
+        st.write('\n')
+        st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
+        st.write('\n')
+
+        df_regressor = create_df_plot(X_test, pipe.predict(X_test), 'Data from model')
+        df_plot2 = create_df_plot(X, y, 'Orginal data')
+        df_plot2 = [df_regressor, df_plot2]
+        df_plot2 = pd.concat(df_plot2)
+
+        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        st.plotly_chart(plot, use_container_width=True)
+
+    with col2:
+        st.subheader('We now have a model to approximate the value of a property in the location selected')
+        st.write('\n')
+        st.write('Please choose an area in [m^2] using the slider below to find the approximate value of the property')
+        st.write('\n')
+        a_forest = float(min(X))
+        b_forest = float(max(X))
+
+        value_selected_forest = st.slider('Area_forest:', a_forest, b_forest, value=float(100))
+
+        st.write('\n')
+
+        z = [float(value_selected_forest)]
         z = np.array(z).reshape(1, -1)
         st.write('The approximate price of the property with that area is :', pipe.fit(X_train, y_train).predict(z))
 
