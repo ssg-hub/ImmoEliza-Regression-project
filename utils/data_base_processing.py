@@ -144,7 +144,7 @@ def create_df_plot(X, y, name: str):
     
     return df_plot
 
-def prices_close_to_area(df_data, value, tolerance=20):
+def prices_close_to_area(df_data, value, tolerance):
     if len(df_data.loc[df_data['area'] == value]) > 0:
         df_prices = df_data.loc[df_data['area'] == value]
         mean_real_price = df_prices.actual_price.mean()
