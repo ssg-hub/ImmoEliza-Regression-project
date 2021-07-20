@@ -3,10 +3,19 @@
 @author: HZU
 """
 import pandas as pd
+import numpy as np
+from scipy import stats
+
 
 
 postal_code = pd.read_csv('postal_code_belgium.csv', sep=',')
-    
+
+def outliers(df, strategy="Do not remove"):
+    if strategy =="Remove":
+        df = df[(np.abs(stats.zscore(df['actual_price'])) < 3)]
+        df = df[(np.abs(stats.zscore(df['area'])) < 3)]
+    return df
+
 def fixing_lon_lat(df):
     #Finding the locations that need to adjust longitud and latitud
     list_postal_codes_to_fill = df.loc[df['location_lat'].isnull()]['location'].values.tolist()

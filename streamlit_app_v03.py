@@ -10,7 +10,7 @@ import time
 import pandas as pd
 import numpy as np
 from utils.data_base_processing import (fixing_lon_lat, cleaning_data, classification_by_type,
-                                        classification_by_region, create_df_plot)
+                                        classification_by_region, create_df_plot, outliers)
 
 #To create the models
 from sklearn.model_selection import train_test_split
@@ -60,7 +60,10 @@ with st.sidebar:
     selection_region = st.sidebar.selectbox('Please select a region in Belgium:',
                                       ('Brussels', 'Flanders', 'Wallonia'))
     selection_type = st.sidebar.selectbox('Please select the building type:',
-                                      ('Apartment', 'House','Office','Industry'))    
+                                      ('Apartment', 'House','Office','Industry'))
+
+    selection_outliers = st.sidebar.selectbox('Please select an outlier strategy:',
+                                          ('Do not remove', 'Remove'))
 
     st.markdown("""---""")    
     value_expand_seleccion_data = False
@@ -85,7 +88,7 @@ with st.sidebar:
         value_expand_neighborgs_regression = True
 
 
-              
+df = outliers(df, selection_outliers)
 
 df_houses, df_office, df_industry, df_apartment = classification_by_type(df)
 
