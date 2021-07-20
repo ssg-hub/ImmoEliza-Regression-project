@@ -143,3 +143,13 @@ def create_df_plot(X, y, name: str):
     df_plot['legend'] = name
     
     return df_plot
+
+def prices_close_to_area(df_data, value, tolerance=20):
+    if len(df_data.loc[df_data['area'] == value]) > 0:
+        df_prices = df_data.loc[df_data['area'] == value]
+        mean_real_price = df_prices.actual_price.mean()
+    elif len(df_data.loc[df_data['area'] == value]) == 0:
+        df_prices = df_data.loc[(value-tolerance) < df_data['area']]
+        df_prices = df_prices.loc[df_prices['area'] < (value+tolerance)]        
+        mean_real_price = df_prices.actual_price.mean()
+    return np.round(mean_real_price,2)
