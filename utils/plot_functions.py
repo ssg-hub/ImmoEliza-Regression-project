@@ -123,6 +123,12 @@ def plotly_plot(chart_type: str, df_plot, label_X: str, label_y: str, title: str
              },                
             title=title,
         )
+        fig.update_layout(legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        ))        
 
     elif chart_type == "Line":
         # with st.echo():
@@ -136,6 +142,12 @@ def plotly_plot(chart_type: str, df_plot, label_X: str, label_y: str, title: str
                  'y': label_y
              }
         )
+        fig.update_layout(legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        ))          
             
     elif chart_type == "3D_Scatter":
         # with st.echo():
@@ -150,6 +162,12 @@ def plotly_plot(chart_type: str, df_plot, label_X: str, label_y: str, title: str
                  'y': label_y
              }                
         )
+        fig.update_layout(legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        ))          
 
         """
         I dont think we will need the next two, in any case, they are created.
