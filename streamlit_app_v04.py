@@ -79,7 +79,7 @@ with st.sidebar:
         value_expand_linear_regression = True
     
     value_expand_neighborgs_regression = False
-    if st.button('Neighborgs regression'):
+    if st.button('KNeighbors regression'):
         value_expand_neighborgs_regression = True
 
     value_expand_random_forest_regression = False
@@ -88,9 +88,10 @@ with st.sidebar:
 
 
     value_expand_all_regression = False
-    if st.button('All the regression'):
+    if st.button('Comparative Study'):
         value_expand_all_regression = True
 
+title_plots = "Price vs. Area with Predictions & Original data"
 
 df = outliers(df, selection_outliers)              
 
@@ -162,7 +163,7 @@ df_data = df_data.reset_index(drop=True)
 
 st.markdown("""---""")
 col1, col_mid, col2 = st.beta_columns((1, 0.1, 1))
-col1.write('This is the dataframe result of the filter:')
+col1.write('This is the dataframe selected as the result of the filter:')
 col1.write('\n')
 col1.dataframe(df_data)
 # #Here we will plot the locations for all the rows selected in a map.
@@ -171,17 +172,18 @@ st.markdown("""---""")
 
 
 
-expander_seleccion_data = st.beta_expander("Data seleccion", expanded=value_expand_seleccion_data)
+expander_seleccion_data = st.beta_expander("Data selection", expanded=value_expand_seleccion_data)
 with expander_seleccion_data:
     col1, col_mid, col2 = st.beta_columns((1, 0.1, 1))
     with col1:
         col1.subheader('We create two arrays')
         #Creating the feature and target data from selection
         X, y = data_selection_linear_regression(df_data)
-        
+
+        col2.write('\n')        
         #creating a dataframe to plot and ploting the data
         df_plot = create_df_plot(X, y, 'Orginal data')
-        plot = plotly_plot('Scatter', df_plot, 'area', 'price', 'Plot of  Target vs Feature (all data)')
+        plot = plotly_plot('Scatter', df_plot, 'Area [m^2]', 'Price [€]', 'Plot of  Target vs Feature (all data)')
         st.plotly_chart(plot, use_container_width=True) 
     
     with col2:
@@ -189,7 +191,10 @@ with expander_seleccion_data:
         col2.write('\n')         
         #splitting the data in test and training 
         X_train, X_test, y_train, y_test = traing_and_test_linear_regression(X,y)
-    
+        col2.write('\n')
+        col2.write('\n')      
+        col2.write('\n')  
+        
         #creating a dataframe for each type of target and feature
         df_plot_train = create_df_plot(X_train, y_train, 'Training data')
         df_plot_test = create_df_plot(X_test, y_test, 'Test data')
@@ -199,7 +204,7 @@ with expander_seleccion_data:
         df_plot = pd.concat(df_plot)
         
         #ploting the data
-        plot = plotly_plot('Scatter', df_plot, 'area', 'price', 'Test and training data')    
+        plot = plotly_plot('Scatter', df_plot, 'Area [m^2]', 'Price [€]', 'Test and training data')    
         st.plotly_chart(plot, use_container_width=True)
 
     
@@ -210,9 +215,9 @@ with expander_linear_regression:
         st.subheader('We create linear regression object')
         st.write('\n')
         st.code("""
-    regressor = LinearRegression()
-    regressor.fit(X_train, y_train)
-    regressor.score(X_train, y_train)
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+regressor.score(X_train, y_train)
                 """)
         st.write('\n')
         regressor = LinearRegression()
@@ -224,46 +229,48 @@ with expander_linear_regression:
         st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
         st.write('\n')
     
-        df_regressor = create_df_plot(X_test, regressor.predict(X_test), 'Data from model')
+        df_regressor = create_df_plot(X_test, regressor.predict(X_test), 'Predictions')
         df_plot2 = create_df_plot(X, y, 'Orginal data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
         
-        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        plot = plotly_plot('Scatter', df_plot2, 'Area [m^2]', 'Price [€]', title_plots)
         st.plotly_chart(plot, use_container_width=True)
     
     with col2:
-        st.subheader('We now have a model to approximate the value of a property in the location selected')
+        st.subheader('We now have a model to approximate the price of a property in the location selected')
         st.write('\n')
-        st.write('Please chosse an area in [m^2] using the slider below to find the approximate value of the property')
+        st.write('Please choose an area in [m^2] using the slider below to find the approximate price of the property:')
         st.write('\n')
         a_line = float(min(X))
         b_line = float(max(X))
         
-        value_selected_linear = st.slider('Area_linear:', a_line, b_line, value=float(100))
+        value_selected_linear = st.slider('Area of property for Linear regression:', a_line, b_line, value=float(100))
         
         st.write('\n')  
         
         z = [float(value_selected_linear)]
         z = np.array(z).reshape(1, -1)
-        st.write('The approximate price of the property with that area is :', regressor.fit(X_train, y_train).predict(z))
+        st.write('The approximate price of the property with that area is :') 
+        currency_value = np.round(regressor.fit(X_train, y_train).predict(z)[0][0], 2)
+        currency = "€{:,.2f}".format(currency_value)
+        st.subheader(currency)
 
-
-expander_neighborgs_regression = st.beta_expander("Neighbors regression", expanded=value_expand_neighborgs_regression)
+expander_neighborgs_regression = st.beta_expander("KNeighbors regression", expanded=value_expand_neighborgs_regression)
 with expander_neighborgs_regression:
     col1, col_mid, col2 = st.beta_columns((1, 0.1, 1))    
     with col1:
-        st.subheader('We create Neighbors regression object')
+        st.subheader('We create KNeighbors regression object')
         st.write('\n')
         st.write('Please select the number of neighbors')
         value_selected = st.slider('', 1, 10,4)
         
         st.code("""
-        pipe = Pipeline([
-                    ("scale", StandardScaler()),
-                    ("model", KNeighborsRegressor(n_neighbors= 'value'))
-                ])
-        pred = pipe.fit(X_train, y_train).predict(X_test)
+pipe = Pipeline([
+            ("scale", StandardScaler()),
+            ("model", KNeighborsRegressor(n_neighbors= 'value'))
+        ])
+pred = pipe.fit(X_train, y_train).predict(X_test)
                 """)
         st.write('\n')
     
@@ -274,36 +281,40 @@ with expander_neighborgs_regression:
         pred = pipe.fit(X_train, y_train).predict(X_test)
     
         
-        st.write('The pipe score is:', np.round(pipe.score(X_train, y_train), 2))
+        st.write('The training score is:', np.round(pipe.score(X_train, y_train), 2))
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:',np.round(pipe.score(X_test, y_test), 2))
         st.write('\n')    
         st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
         st.write('\n')
     
-        df_regressor = create_df_plot(X_test, pipe.predict(X_test), 'Data from model')
+        df_regressor = create_df_plot(X_test, pipe.predict(X_test), 'Prediction')
         df_plot2 = create_df_plot(X, y, 'Orginal data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
         
-        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        plot = plotly_plot('Scatter', df_plot2, 'Area [m^2]', 'Price [€]', title_plots)
         st.plotly_chart(plot, use_container_width=True)
+       
     
     with col2:
-        st.subheader('We now have a model to approximate the value of a property in the location selected')
+        st.subheader('We now have a model to approximate the price of a property in the location selected')
         st.write('\n')
-        st.write('Please chosse an area in [m^2] using the slider below to find the approximate value of the property')
+        st.write('Please chosse an area in [m^2] using the slider below to find the approximate price of the property')
         st.write('\n')
         a_neig = float(min(X))
         b_neig = float(max(X))
         
-        value_selected_neig = st.slider('Area_neighbors:', a_neig, b_neig, value=float(100))
+        value_selected_neig = st.slider('Area of property for Kneighbors regression:', a_neig, b_neig, value=float(100))
         
         st.write('\n')  
         
         z = [float(value_selected_neig)]
         z = np.array(z).reshape(1, -1)
-        st.write('The approximate price of the property with that area is :', pipe.fit(X_train, y_train).predict(z))
+        st.write('The approximate price of the property with that area is :')
+        currency_value = np.round(pipe.fit(X_train, y_train).predict(z)[0][0], 2)
+        currency = "€{:,.2f}".format(currency_value)
+        st.subheader(currency)             
 
 expander_random_forest_regression = st.beta_expander("Random Forest Regression", expanded=value_expand_random_forest_regression)
 with expander_random_forest_regression:
@@ -331,41 +342,45 @@ pred = pipe.fit(X_train, y_train).predict(X_test)
         ])
         pred_forest = pipe_forest.fit(X_train, y_train).predict(X_test)
 
-        st.write('The pipe score is:', np.round(pipe_forest.score(X_train, y_train), 2))
+        st.write('The training score is:', np.round(pipe_forest.score(X_train, y_train), 2))
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:', np.round(pipe_forest.score(X_test, y_test), 2))
         st.write('\n')
         st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
         st.write('\n')
 
-        df_regressor = create_df_plot(X_test, pipe_forest.predict(X_test), 'Data from model')
+        df_regressor = create_df_plot(X_test, pipe_forest.predict(X_test), 'Prediction')
         df_plot2 = create_df_plot(X, y, 'Orginal data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
 
-        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        plot = plotly_plot('Scatter', df_plot2, 'Area [m^2]', 'Price [€]', title_plots)
         st.plotly_chart(plot, use_container_width=True)
 
     with col2:
-        st.subheader('We now have a model to approximate the value of a property in the location selected')
+        st.subheader('We now have a model to approximate the price of a property in the location selected')
         st.write('\n')
-        st.write('Please choose an area in [m^2] using the slider below to find the approximate value of the property')
+        st.write('Please choose an area in [m^2] using the slider below to find the approximate price of the property')
         st.write('\n')
         a_forest = float(min(X))
         b_forest = float(max(X))
 
-        value_selected_forest = st.slider('Area_forest:', a_forest, b_forest, value=float(100))
+        value_selected_forest = st.slider('Area of property for Random Forest regression:', a_forest, b_forest, value=float(100))
 
         st.write('\n')
 
         z = [float(value_selected_forest)]
         z = np.array(z).reshape(1, -1)
-        st.write('The approximate price of the property with that area is :', np.round(pipe_forest.fit(X_train, y_train).predict(z),0))
+        st.write('The approximate price of the property with that area is :')
+        currency_value = np.round(pipe_forest.fit(X_train, y_train).predict(z)[0], 2)
+        currency = "€{:,.2f}".format(currency_value)
+        st.subheader(currency)    
+
 
 ##############################################################################
 #############       From here all together
 
-expander_all_together = st.beta_expander("All the regression", expanded=value_expand_all_regression)
+expander_all_together = st.beta_expander("Comparative Study", expanded=value_expand_all_regression)
 
 with expander_all_together:
     col1, col_mid, col2, col_mid, col3 = st.beta_columns((1, 0.1, 1, 0.1, 1))    
@@ -380,17 +395,27 @@ with expander_all_together:
         st.write('\n')    
         st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
         st.write('\n')
-    
-        df_regressor = create_df_plot(X_test, regressor.predict(X_test), 'Data from model')
+        st.write('\n')
+        st.write('\n')        
+        st.write('\n')
+        st.write('\n')
+        st.write('\n')  
+        st.write('\n')
+        st.write('\n')
+        st.write('\n')  
+        st.write('\n')
+        st.write('\n')  
+        
+        df_regressor = create_df_plot(X_test, regressor.predict(X_test), 'Prediction')
         df_plot2 = create_df_plot(X, y, 'Orginal data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
         
-        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        plot = plotly_plot('Scatter', df_plot2, 'Area [m^2]', 'Price [€]', title_plots)
         st.plotly_chart(plot, use_container_width=True)
         
     with col2:
-        st.subheader('Neighbors regression')
+        st.subheader('KNeighbors regression')
         st.write('\n')
         st.write('Please select the number of neighbors')
         value_selected_all_neig = st.slider('Neighbors', 1, 10,4)
@@ -403,19 +428,19 @@ with expander_all_together:
         pred_neig = pipe_neig.fit(X_train, y_train).predict(X_test)
     
         
-        st.write('The pipe score is:', np.round(pipe_neig.score(X_train, y_train), 2))
+        st.write('The training score is:', np.round(pipe_neig.score(X_train, y_train), 2))
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:',np.round(pipe_neig.score(X_test, y_test), 2))
         st.write('\n')    
         st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
         st.write('\n')
     
-        df_regressor = create_df_plot(X_test, pipe_neig.predict(X_test), 'Data from model')
+        df_regressor = create_df_plot(X_test, pipe_neig.predict(X_test), 'Predictions')
         df_plot2 = create_df_plot(X, y, 'Orginal data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
         
-        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        plot = plotly_plot('Scatter', df_plot2, 'Area [m^2]', 'Price [€]', title_plots)
         st.plotly_chart(plot, use_container_width=True)
     
     with col3:
@@ -430,19 +455,19 @@ with expander_all_together:
         ])
         pred = pipe_forest.fit(X_train, y_train).predict(X_test)
 
-        st.write('The pipe score is:', np.round(pipe_forest.score(X_train, y_train), 2))
+        st.write('The training score is:', np.round(pipe_forest.score(X_train, y_train), 2))
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:', np.round(pipe_forest.score(X_test, y_test), 2))
         st.write('\n')
         st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
         st.write('\n')
 
-        df_regressor = create_df_plot(X_test, pipe_forest.predict(X_test), 'Data from model')
+        df_regressor = create_df_plot(X_test, pipe_forest.predict(X_test), 'Predictions')
         df_plot2 = create_df_plot(X, y, 'Orginal data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
 
-        plot = plotly_plot('Scatter', df_plot2, 'area', 'price', 'Price vs Area training set & org data')
+        plot = plotly_plot('Scatter', df_plot2, 'Area [m^2]', 'Price [€]', title_plots)
         st.plotly_chart(plot, use_container_width=True)        
         
 
@@ -451,7 +476,7 @@ with expander_all_together:
     with col_area_all_regre:
         st.subheader('We will test all the models at the same time')
         st.write('\n')
-        st.write('Please chosse an area in [m^2] using the slider below to find the approximate value of the property')
+        st.write('Please choose an area in [m^2] using the slider below to find the approximate price of the property')
         st.write('\n')
         a_all_reg = float(min(X))
         b_all_reg = float(max(X))
@@ -464,8 +489,7 @@ with expander_all_together:
 
         st.write('\n')
 
-        st.write('Properties with these characteristics have')
-        st.write("a real mean value of:")
+        st.write('Properties with these characteristics have a real mean-value of:')
         currency = "€{:,.2f}".format(np.round(mean_price,2))
         st.subheader(currency)        
         st.write('\n')
@@ -533,4 +557,4 @@ with expander_all_together:
         st.write('the market, the error percentage is:')
         st.write('\n')
         porcent_error = np.abs(mean_price-currency_value)*100/currency_value
-        st.subheader(np.round(porcent_error,2))        
+        st.subheader(np.round(porcent_error,2))
