@@ -491,11 +491,14 @@ with expander_all_together:
 
         st.write('Properties with these characteristics have a real mean-value of:')
         currency = "€{:,.2f}".format(np.round(mean_price,2))
-        st.subheader(currency)        
+        st.header(currency)        
         st.write('\n')
         st.write('\n')        
+        st.write('\n')
+        st.write('\n')         
+        st.write('\n')
+        st.write('\n') 
         
-
     col_linear, col_mid, col_neig, col_mid, col_forest = st.beta_columns((1, 0.1, 1, 0.1, 1))        
 
 
@@ -506,18 +509,18 @@ with expander_all_together:
         st.write('with that area to :')
         currency_value = np.round(regressor.fit(X_train, y_train).predict(z_linear)[0][0], 2)
         currency = "€{:,.2f}".format(currency_value)
-        st.subheader(currency)
+        st.header(currency)
         st.write('\n')
         st.write('When the value is compared with the experimental results')
         st.write('there is an approximate margin of error of:')
         error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
-        st.subheader(error_in_currency)
+        st.header(error_in_currency)
         st.write('This means that when this model is')
         st.write('compared with the real prices in')
         st.write('the market, the error percentage is:')
         st.write('\n')
         porcent_error = np.abs(mean_price-currency_value)*100/currency_value
-        st.subheader(np.round(porcent_error,2))
+        st.header(str(np.round(porcent_error,2))+"%")
 
     with col_neig:
         z_neig = [float(value_all_reg)]
@@ -526,18 +529,18 @@ with expander_all_together:
         st.write('of the property with that area to :')
         currency_value = np.round(pipe_neig.fit(X_train, y_train).predict(z_neig)[0][0], 2)
         currency = "€{:,.2f}".format(currency_value)
-        st.subheader(currency)
+        st.header(currency)
         st.write('\n')
         st.write('When the value is compared with the experimental results')
         st.write('there is an approximate margin of error of:')
         error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
-        st.subheader(error_in_currency)
+        st.header(error_in_currency)
         st.write('This means that when this model is')
         st.write('compared with the real prices in')
         st.write('the market, the error percentage is:')
         st.write('\n')
         porcent_error = np.abs(mean_price-currency_value)*100/currency_value
-        st.subheader(np.round(porcent_error,2))
+        st.header(str(np.round(porcent_error,2))+"%")
 
     with col_forest:
         z_forest = [float(value_all_reg)]
@@ -546,15 +549,15 @@ with expander_all_together:
         st.write('of the property with that area to :')
         currency_value = np.round(pipe_forest.fit(X_train, y_train).predict(z_forest)[0], 2)
         currency = "€{:,.2f}".format(currency_value)
-        st.subheader(currency)
+        st.header(currency)
         st.write('\n')
         st.write('When the value is compared with the experimental results')
         st.write('there is an approximate margin of error of:')
         error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
-        st.subheader(error_in_currency)
+        st.header(error_in_currency)
         st.write('This means that when this model is')
         st.write('compared with the real prices in')
         st.write('the market, the error percentage is:')
         st.write('\n')
         porcent_error = np.abs(mean_price-currency_value)*100/currency_value
-        st.subheader(np.round(porcent_error,2))
+        st.header(str(np.round(porcent_error,2))+"%")        
