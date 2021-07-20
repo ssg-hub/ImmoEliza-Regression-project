@@ -63,7 +63,7 @@ with st.sidebar:
                                       ('Apartment', 'House','Office','Industry'))
 
     selection_outliers = st.sidebar.selectbox('Please select an outlier strategy:',
-                                              ('Do not remove', 'Remove'))
+                                              ('Do not remove', 'Remove at 2', 'Remove at 3', 'Remove at 4'))
 
     st.markdown("""---""")    
     value_expand_seleccion_data = False
