@@ -21,6 +21,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
+#To manage errors
+from sklearn.metrics import mean_absolute_error
+
+
 #To visualize the plots
 import matplotlib.pyplot as plt
 import plotly.express as px
@@ -36,7 +40,6 @@ from utils.linear_regression import (data_selection_linear_regression,
 #                                      traing_and_test_neighbors_regression,
 #                                      neighbors_regression
 #                                      )
-
 
 
 #Loading the data in df
@@ -60,10 +63,10 @@ with st.sidebar:
     selection_region = st.sidebar.selectbox('Please select a region in Belgium:',
                                       ('Brussels', 'Flanders', 'Wallonia'))
     selection_type = st.sidebar.selectbox('Please select the building type:',
-                                      ('Apartment', 'House','Office','Industry'))
+                                      ('Apartment', 'House','Office','Industry'))    
 
     selection_outliers = st.sidebar.selectbox('Please select an outlier strategy:',
-                                              ('Do not remove', 'Remove'))
+                                              ('Do not remove', 'Remove'))    
 
     st.markdown("""---""")    
     value_expand_seleccion_data = False
@@ -82,11 +85,13 @@ with st.sidebar:
     if st.button('Random Forest regression'):
         value_expand_random_forest_regression = True
 
+
     value_expand_all_regression = False
     if st.button('All the regression'):
         value_expand_all_regression = True
 
-df = outliers(df, selection_outliers)
+
+df = outliers(df, selection_outliers)              
 
 df_houses, df_office, df_industry, df_apartment = classification_by_type(df)
 
@@ -418,17 +423,6 @@ with expander_all_together:
         st.write('Please select the sample threshold for splitting nodes')
         value_selected_random_forest = st.slider('Random Forest', 2, 20, 10)
 
-        st.code("""
-pipe = Pipeline([
-            ("scale", StandardScaler()),
-            ("model", RandomForestRegressor(min_samples_split= 'value',
-                                            max_features='log2',
-                                            random_state=42))
-        ])
-pred = pipe.fit(X_train, y_train).predict(X_test)
-                """)
-        st.write('\n')
-
         pipe_forest = Pipeline([
             ("scale", StandardScaler()),
             ("model", RandomForestRegressor(min_samples_split=value_selected_random_forest, max_features='log2', random_state=42))
@@ -470,34 +464,27 @@ pred = pipe.fit(X_train, y_train).predict(X_test)
     with col_linear:
         z_linear = [float(value_all_reg)]
         z_linear = np.array(z_linear).reshape(1, -1)
-        st.write('The linear regression approximate the price of the property with that area to :', np.round(regressor.fit(X_train, y_train).predict(z_linear),0))
+        st.write('The linear regression approximate the price of the property')
+        st.write('with that area to :')
+        currency = np.round(regressor.fit(X_train, y_train).predict(z_linear)[0][0], 2)
+        currency = "€{:,.2f}".format(currency)
+        st.subheader(currency)
 
     with col_neig:
         z_neig = [float(value_all_reg)]
         z_neig = np.array(z_neig).reshape(1, -1)
-        st.write('The neighbors regression approximate the price of the property with that area to :', np.round(pipe_neig.fit(X_train, y_train).predict(z_neig),0))
-        
-        
+        st.write('The neighbors regression approximate the price')
+        st.write('of the property with that area to :')
+        currency = np.round(pipe_neig.fit(X_train, y_train).predict(z_neig)[0][0], 2)
+        currency = "€{:,.2f}".format(currency)
+        st.subheader(currency)
+
+
     with col_forest:
         z_forest = [float(value_all_reg)]
         z_forest = np.array(z_forest).reshape(1, -1)
-        st.write('The Random Forest regression approximate the price of the property with that area to :', np.round(pipe_forest.fit(X_train, y_train).predict(z_forest),0))  
-        
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+        st.write('The Random Forest regression approximate the price')
+        st.write('of the property with that area to :')
+        currency = np.round(pipe_forest.fit(X_train, y_train).predict(z_forest)[0], 2)
+        currency = "€{:,.2f}".format(currency)
+        st.subheader(currency)
