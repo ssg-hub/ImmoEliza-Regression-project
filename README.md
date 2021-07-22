@@ -11,7 +11,7 @@ To create a Machine Learning Regression project based on real data for Belgian h
 Our application will build various types of Regression models and predict approximate prices for properties in Belgium. This Machine Learning application is based on **Streamlit** library of Python. It gives the user the possibility to choose between **Brussels, Flanders and Wallonia** regions and **houses, apartments, offices and industry** property types. Outliers removal option and hyperparameter tuning for regression models are key feature of our project application. For performance analysys, a comparative study between **Linear Regression, K-Nearest Neighbor Regression and Random Forest Regression** models is presented on basis of error between predictions and real data.
 
 ## Running
-[Belgian Housing Market Prediction App](https://share.streamlit.io/ssg-hub/immoeliza-regression-project/main)
+Click on [Belgian Housing Market Prediction App](https://share.streamlit.io/ssg-hub/immoeliza-regression-project/main)
 
 ## Installation 
 1. Clone the repo
