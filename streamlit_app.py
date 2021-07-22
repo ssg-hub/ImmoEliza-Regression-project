@@ -1,6 +1,6 @@
+
 # -*- coding: utf-8 -*-
 """
-
 """
 #To create the app
 import streamlit as st
@@ -393,7 +393,8 @@ with expander_all_together:
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:',np.round(regressor.score(X_test, y_test), 2))
         st.write('\n')    
-        st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
+        st.write('Now, we will use the predict method of our model')
+        st.write('on the test dataset ( X_test )')
         st.write('\n')
         st.write('\n')
         st.write('\n')        
@@ -406,8 +407,8 @@ with expander_all_together:
         st.write('\n')
         st.write('\n')  
         
-        df_regressor = create_df_plot(X_test, regressor.predict(X_test), 'Prediction')
-        df_plot2 = create_df_plot(X, y, 'Orginal data')
+        df_regressor = create_df_plot(X_test, regressor.predict(X_test), 'Predictions')
+        df_plot2 = create_df_plot(X, y, 'Original data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
         
@@ -418,7 +419,7 @@ with expander_all_together:
         st.subheader('KNeighbors regression')
         st.write('\n')
         st.write('Please select the number of neighbors')
-        value_selected_all_neig = st.slider('Neighbors', 1, 10,4)
+        value_selected_all_neig = st.slider('KNeighbors', 1, 10,4)
         st.write('\n')
     
         pipe_neig = Pipeline([
@@ -432,11 +433,12 @@ with expander_all_together:
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:',np.round(pipe_neig.score(X_test, y_test), 2))
         st.write('\n')    
-        st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
+        st.write('Now, we will use the predict method of our model')
+        st.write('on the test dataset ( X_test )')
         st.write('\n')
     
         df_regressor = create_df_plot(X_test, pipe_neig.predict(X_test), 'Predictions')
-        df_plot2 = create_df_plot(X, y, 'Orginal data')
+        df_plot2 = create_df_plot(X, y, 'Original data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
         
@@ -459,11 +461,12 @@ with expander_all_together:
         st.write('\n')
         st.write('The score of our model with X_test and y_test is:', np.round(pipe_forest.score(X_test, y_test), 2))
         st.write('\n')
-        st.write('Now, we will use the predict method of our model on the test dataset ( X_test )')
+        st.write('Now, we will use the predict method of our model')
+        st.write('on the test dataset ( X_test )')
         st.write('\n')
 
         df_regressor = create_df_plot(X_test, pipe_forest.predict(X_test), 'Predictions')
-        df_plot2 = create_df_plot(X, y, 'Orginal data')
+        df_plot2 = create_df_plot(X, y, 'Original data')
         df_plot2 = [df_regressor, df_plot2]
         df_plot2 = pd.concat(df_plot2)
 
@@ -505,14 +508,14 @@ with expander_all_together:
     with col_linear:
         z_linear = [float(value_all_reg)]
         z_linear = np.array(z_linear).reshape(1, -1)
-        st.write('The linear regression approximate the price of the property')
+        st.write('The Linear regression approximates the price of the property')
         st.write('with that area to :')
         currency_value = np.round(regressor.fit(X_train, y_train).predict(z_linear)[0][0], 2)
         currency = "€{:,.2f}".format(currency_value)
         st.header(currency)
         st.write('\n')
         st.write('When the value is compared with the experimental results')
-        st.write('there is an approximate margin of error of:')
+        st.write('there is an approximate error margin of:')
         error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
         st.header(error_in_currency)
         st.write('This means that when this model is')
@@ -525,14 +528,14 @@ with expander_all_together:
     with col_neig:
         z_neig = [float(value_all_reg)]
         z_neig = np.array(z_neig).reshape(1, -1)
-        st.write('The neighbors regression approximate the price')
+        st.write('The KNeighbors regression approximates the price')
         st.write('of the property with that area to :')
         currency_value = np.round(pipe_neig.fit(X_train, y_train).predict(z_neig)[0][0], 2)
         currency = "€{:,.2f}".format(currency_value)
         st.header(currency)
         st.write('\n')
         st.write('When the value is compared with the experimental results')
-        st.write('there is an approximate margin of error of:')
+        st.write('there is an approximate error margin of:')
         error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
         st.header(error_in_currency)
         st.write('This means that when this model is')
@@ -545,14 +548,14 @@ with expander_all_together:
     with col_forest:
         z_forest = [float(value_all_reg)]
         z_forest = np.array(z_forest).reshape(1, -1)
-        st.write('The Random Forest regression approximate the price')
+        st.write('The Random Forest regression approximates the price')
         st.write('of the property with that area to :')
         currency_value = np.round(pipe_forest.fit(X_train, y_train).predict(z_forest)[0], 2)
         currency = "€{:,.2f}".format(currency_value)
         st.header(currency)
         st.write('\n')
         st.write('When the value is compared with the experimental results')
-        st.write('there is an approximate margin of error of:')
+        st.write('there is an approximate error margin of:')
         error_in_currency = "€{:,.2f}".format(np.abs(mean_price-currency_value))
         st.header(error_in_currency)
         st.write('This means that when this model is')
